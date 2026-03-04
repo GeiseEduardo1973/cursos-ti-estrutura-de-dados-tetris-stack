@@ -1,0 +1,117 @@
+/ Criado por Geise Severo Eduardo
+// Trabalho de: Estrutura de dados em C++
+// Aluna fazendo dupla graduação em
+// CIências da Computação, 3º Sememstre - Matrícula 202501462731
+// Engenharia de Software, 3º Semestre - Matrícula 202501534724
+// Jogo Tetris Stack  - Nivel: Novato
+// Instituição: Estácio
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <ctime>
+
+using namespace std;
+
+#define MAX 5
+
+// Cores ANSI para o estilo do seu jogo
+#define PINK         "\x1b[95m" // Rosa brilhante/Light Purple
+#define WHITE        "\x1b[37m"
+#define RESET        "\x1b[0m"
+
+// [cite: 65, 66] Requisito: Struct para a peça
+struct Peca {
+    char nome; // 'I', 'O', 'T', 'L' [cite: 67]
+    int id;    // [cite: 68]
+};
+
+//  Estrutura de Fila Circular
+struct FilaPecas {
+    Peca itens[MAX];
+    int inicio = 0;
+    int fim = 0;
+    int total = 0;
+};
+
+// [cite: 69] Função para gerar peças automaticamente
+Peca gerarPeca(int &contador) {
+    char tipos[] = {'I', 'O', 'T', 'L'};
+    Peca p;
+    p.nome = tipos[rand() % 4];
+    p.id = contador++;
+    return p;
+}
+
+// [cite: 63] Inserir nova peça (Enqueue)
+void inserir(FilaPecas &f, Peca p) {
+    if (f.total < MAX) {
+        f.itens[f.fim] = p;
+        f.fim = (f.fim + 1) % MAX;
+        f.total++;
+    } else {
+        cout << WHITE << "\n[!] Fila cheia!" << RESET << endl;
+    }
+}
+
+// [cite: 62] Jogar peça (Dequeue)
+void jogar(FilaPecas &f) {
+    if (f.total > 0) {
+        cout << WHITE << "\nVoce jogou a peca: [" << f.itens[f.inicio].nome << " " << f.itens[f.inicio].id << "]" << RESET << endl;
+        f.inicio = (f.inicio + 1) % MAX;
+        f.total--;
+    } else {
+        cout << WHITE << "\n[!] Nao ha pecas para jogar!" << RESET << endl;
+    }
+}
+
+// [cite: 64] Exibir estado da fila
+void mostrarFila(const FilaPecas &f) {
+    cout << PINK << "\nFila atual: " << RESET;
+    int idx = f.inicio;
+    for (int i = 0; i < f.total; i++) {
+        cout << "[" << f.itens[idx].nome << " " << f.itens[idx].id << "] ";
+        idx = (idx + 1) % MAX;
+    }
+    cout << endl;
+}
+
+int main() {
+    srand(time(0));
+    FilaPecas fila;
+    int contadorId = 0;
+    int opcao;
+
+    // [cite: 60] Inicializar com 5 peças
+    for (int i = 0; i < MAX; i++) {
+        inserir(fila, gerarPeca(contadorId));
+    }
+
+    do {
+        mostrarFila(fila);
+
+        // --- MENU PINK CUSTOMIZADO ---
+        cout << PINK << "\n===================================================" << endl;
+        cout << "      TETRIS STACK - NIVEL NOVATO (ED)" << endl;
+        cout << "===================================================" << endl;
+        cout << "  1. Jogar a Peca (Dequeue)" << endl;
+        cout << "  2. Inserir Nova Peca (Enqueue)" << endl;
+        cout << "  0. Sair do Jogo" << endl;
+        cout << "===================================================" << RESET << endl;
+
+        cout << WHITE << "Escolha sua opcao: " << RESET;
+        cin >> opcao;
+
+        if (opcao == 1) {
+            jogar(fila);
+        } else if (opcao == 2) {
+            inserir(fila, gerarPeca(contadorId));
+        } else if (opcao != 0) {
+            cout << WHITE << "Opcao invalida!" << RESET << endl;
+        }
+
+    } while (opcao != 0);
+
+    cout << PINK << "\nObrigada por jogar Tetris Stack, Geise!" << RESET << endl;
+
+    return 0;
