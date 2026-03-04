@@ -1,0 +1,101 @@
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+#define MAX 5
+
+// Cores ANSI
+#define PINK "\x1b[35m"
+#define WHITE "\x1b[37m"
+#define LIGHT_PURPLE "\x1b[95m"
+#define RESET "\x1b[0m"
+
+// Struct da peça
+struct Peca {
+    char nome; // 'I', 'O', 'T', 'L'
+    int id;    // Identificador único
+};
+
+// Estrutura da fila
+struct Fila {
+    Peca itens[MAX];
+    int inicio = 0;
+    int fim = 0;
+    int total = 0;
+};
+
+// Funções auxiliares
+bool filaCheia(Fila *f) { return f->total == MAX; }
+bool filaVazia(Fila *f) { return f->total == 0; }
+
+void inserir(Fila *f, Peca e) {
+    if (filaCheia(f)) {
+        cout << WHITE << "Fila cheia, não é possível inserir!\n" << RESET;
+        return;
+    }
+    f->itens[f->fim] = e;
+    f->fim = (f->fim + 1) % MAX;
+    f->total++;
+}
+
+Peca retirar(Fila *f) {
+    Peca vazio = {'-', -1};
+    if (filaVazia(f)) {
+        cout << WHITE << "Fila vazia, nada para retirar!\n" << RESET;
+        return vazio;
+    }
+    Peca e = f->itens[f->inicio];
+    f->inicio = (f->inicio + 1) % MAX;
+    f->total--;
+    return e;
+}
+
+void mostrarFila(Fila *f) {
+    cout << WHITE << "Fila: ";
+    for (int i = 0, idx = f->inicio; i < f->total; i++, idx = (idx + 1) % MAX) {
+        cout << "[" << f->itens[idx].nome << ", " << f->itens[idx].id << "] ";
+    }
+    cout << RESET << endl;
+}
+
+// Programa principal
+int main() {
+    Fila fila;
+    int opcao;
+    int contadorID = 1;
+
+    do {
+        cout << LIGHT_PURPLE << "===================================================\n";
+        cout << "        TETRIS STACK - NÍVEL NOVATO ETAPA FINAL\n";
+        cout << "===================================================\n" << RESET;
+
+        cout << PINK << "--- 1 --- Jogar a Peça ---\n";
+        cout << "--- 2 --- Inserir Nova Peça ---\n";
+        cout << "--- 3 --- Mostrar Fila ---\n";
+        cout << "--- 0 --- Sair do Jogo ---\n" << RESET;
+
+        cout << WHITE << "Digite sua opção: " << RESET;
+        cin >> opcao;
+
+        if (opcao == 1) {
+            Peca p = retirar(&fila);
+            if (p.id != -1)
+                cout << WHITE << "Você jogou a peça " << p.nome << " (id " << p.id << ")\n" << RESET;
+        } else if (opcao == 2) {
+            char nome;
+            cout << WHITE << "Digite o nome da peça (I/O/T/L): " << RESET;
+            cin >> nome;
+            Peca nova = {nome, contadorID++};
+            inserir(&fila, nova);
+        } else if (opcao == 3) {
+            mostrarFila(&fila);
+        } else if (opcao == 0) {
+            cout << LIGHT_PURPLE << "Obrigada por jogar Tetris Stack!\n" << RESET;
+        } else {
+            cout << WHITE << "Opção inválida!\n" << RESET;
+        }
+
+    } while (opcao != 0);
+
+    return 0;
+}
