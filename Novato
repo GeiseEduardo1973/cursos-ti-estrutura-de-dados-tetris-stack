@@ -15,14 +15,14 @@ using namespace std;
 
 #define MAX 5
 
-// Cores ANSI para o estilo do seu jogo
+// Cores ANSI para o estilo do meu jogo
 #define PINK         "\x1b[95m" // Rosa brilhante/Light Purple
 #define WHITE        "\x1b[37m"
 #define RESET        "\x1b[0m"
 
 // [cite: 65, 66] Requisito: Struct para a peça
 struct Peca {
-    char nome; // 'I', 'O', 'T', 'L' [cite: 67]
+    char nome; // 'I', 'O', 'T', 'L' 
     int id;    // [cite: 68]
 };
 
@@ -34,7 +34,7 @@ struct FilaPecas {
     int total = 0;
 };
 
-// [cite: 69] Função para gerar peças automaticamente
+// Função para gerar peças automaticamente
 Peca gerarPeca(int &contador) {
     char tipos[] = {'I', 'O', 'T', 'L'};
     Peca p;
@@ -43,7 +43,7 @@ Peca gerarPeca(int &contador) {
     return p;
 }
 
-// [cite: 63] Inserir nova peça (Enqueue)
+// Inserir nova peça (Enqueue)
 void inserir(FilaPecas &f, Peca p) {
     if (f.total < MAX) {
         f.itens[f.fim] = p;
@@ -54,7 +54,7 @@ void inserir(FilaPecas &f, Peca p) {
     }
 }
 
-// [cite: 62] Jogar peça (Dequeue)
+//  Jogar peça (Dequeue)
 void jogar(FilaPecas &f) {
     if (f.total > 0) {
         cout << WHITE << "\nVoce jogou a peca: [" << f.itens[f.inicio].nome << " " << f.itens[f.inicio].id << "]" << RESET << endl;
@@ -65,7 +65,7 @@ void jogar(FilaPecas &f) {
     }
 }
 
-// [cite: 64] Exibir estado da fila
+// Exibir estado da fila
 void mostrarFila(const FilaPecas &f) {
     cout << PINK << "\nFila atual: " << RESET;
     int idx = f.inicio;
@@ -82,7 +82,7 @@ int main() {
     int contadorId = 0;
     int opcao;
 
-    // [cite: 60] Inicializar com 5 peças
+    // Inicializar com 5 peças
     for (int i = 0; i < MAX; i++) {
         inserir(fila, gerarPeca(contadorId));
     }
