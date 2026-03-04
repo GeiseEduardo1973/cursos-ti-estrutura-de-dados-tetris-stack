@@ -23,7 +23,7 @@ using namespace std;
 //  Requisito: Struct para a peça
 struct Peca {
     char nome; // 'I', 'O', 'T', 'L' 
-    int id;    // [cite: 68]
+    int id;    // 
 };
 
 //  Estrutura de Fila Circular
