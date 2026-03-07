@@ -1,0 +1,120 @@
+// Criado por Geise Severo Eduardo
+// Trabalho de: Estrutura de dados em C++
+// Aluna fazendo dupla graduação em
+// CIências da Computação, 3º Sememstre - Matrícula 202501462731
+// Engenharia de Software, 3º Semestre - Matrícula 202501534724
+// Jogo Tetris Stack  - Nivel: Aventureiro
+// Instituição: Estácio
+
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
+
+using namespace std;
+
+#define MAX_FILA 5
+#define MAX_Pilha 3
+
+// Cores ANSI para o estilo do meu jogo
+#define PINK         "\x1b[95m" // Rosa brilhante/Light Purple
+#define WHITE        "\x1b[37m"
+#define RESET        "\x1b[0m"
+
+//  Requisito: Struct para a peça
+struct Peca {
+    char nome; // 'I', 'O', 'T', 'L'
+    int id;    //
+};
+
+// Requisito: Struct para a pilha Pilha
+struct Pilha{
+    Peca itens [MAX_Pilha];
+    int topo;
+};
+
+// inicializando e configurando a pilha
+void inicializarPilha(Pilha *p) {
+    p->topo = -1;
+}
+int pilhaVazia(Pilha *p) {
+    return p->topo == -1;
+}
+int pilhaCheia(Pilha *p){
+    return p-> topo == MAX_Pilha -1;
+}
+
+//Inserindo - PUSH
+void push(Pilha *p, Peca nova){
+    if (pilhaCheia(p))    {
+        printf("\n[!]Pilha cheia. Não é possível Inserir!\n");
+        return;
+    }
+    p->topo++;
+    p->itens[p->topo] = nova;
+}
+
+//Rwmovendo - POP
+void pop(Pilha *p, Peca *removida){
+    if (pilhaVazia(p)){
+        printf("\n[!]Pilha vazia. Não é possível remover.\n");
+        return;
+    }
+    *removida = p->itens[p->topo];
+    p->topo--;
+}
+
+//Mostrando estado - PEEK
+void peek (Pilha*p, Peca *topoPeca){
+    if (pilhaVazia(p))  {
+        printf("\n[!]Pilha vazia. Nada para mostrar!\n");
+        return;
+    }
+    *topoPeca = p->itens [p->topo];
+}
+
+// Lógtica do Jogo
+// Requisito: Função gerarPeca
+Peca gerarPeca(int *contadorID) {
+    char tipos[] = {'I', 'O', 'T', 'L'};
+    Peca nova;
+    nova.nome = tipos[rand() % 4]; // Escolhe um tipo aleatório
+    nova.id = (*contadorID)++;      // Atribui ID e incrementa o global
+    return nova;
+}
+//Mostrando a pilha
+void mostrarPilha(Pilha *p){
+    printf("Pilha de reserva (topo-> base):\n");
+    if (pilhaVazia(p))  {
+        printf("[Vazia]");
+        } else
+        {
+            for (int i = p->topo; i >= 0; i--)    {
+                printf("[%c,%d]", p->itens[i].nome, p->itens[i].id);
+            }
+        }
+    printf("\n\n");
+}
+
+int main(){
+    srand(time(NULL)); // Semente para números aleatórios
+    int proximoID = 0;
+
+    Pilha reserva;
+    inicializarPilha(&reserva);
+
+    // Exemplo de como as peças entram no jogo:
+    printf("--- Simulando Reserva de Pecas ---\n");
+
+    for(int i = 0; i < 3; i++) {
+        Peca p = gerarPeca(&proximoID); // Gera automaticamente!
+        push(&reserva, p);
+    }
+
+    mostrarPilha(&reserva);
+
+    // Testando o PEEK
+    Peca topo;
+    peek(&reserva, &topo);
+    printf("Espiadinha no topo da reserva: [%c %d]\n", topo.nome, topo.id);
+    return 0;
+}
