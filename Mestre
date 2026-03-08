@@ -1,0 +1,144 @@
+// Criado por Geise Severo Eduardo
+// Trabalho de: Estrutura de dados em C++
+// Aluna fazendo dupla graduação em
+// CIências da Computação, 3º Sememstre - Matrícula 202501462731
+// Engenharia de Software, 3º Semestre - Matrícula 202501534724
+// Jogo Tetris Stack  - Nivel: Mestre
+// Instituição: Estácio
+
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+#define MAX_Fila 5
+#define MAX_Pilha 5
+
+struct Peca {
+    char nome;
+    int id;
+};
+
+struct Fila {
+    Peca dados[MAX_Fila];
+    int inicio, fim;
+};
+
+struct Pilha {
+    Peca itens[MAX_Pilha];
+    int topo;
+};
+
+// --- FUNÇÕES DA PILHA ---
+void inicializarPilha(Pilha *p) { p->topo = -1; }
+
+int pilhaVazia(Pilha *p) { return p->topo == -1; }
+
+int pilhaCheia(Pilha *p) {
+    return p->topo >= MAX_Pilha - 1;
+}
+
+void push(Pilha *p, Peca nova) {
+    if (pilhaCheia(p)) {
+        printf("\n[!] Alerta: Pilha cheia!\n");
+        return;
+    }
+    p->topo++;
+    p->itens[p->topo] = nova;
+}
+
+// Esta é a função que faltava para o seu main funcionar!
+void pop(Pilha *p, Peca *removida) {
+    if (pilhaVazia(p)) {
+        printf("\n[!] Alerta: Pilha vazia!\n");
+        return;
+    }
+    *removida = p->itens[p->topo];
+    p->topo--;
+}
+
+// --- FUNÇÕES DA FILA ---
+void inicializarFila(Fila *f) { f->inicio = 0; f->fim = 0; }
+
+int filaVazia(Fila *f) { return f->inicio == f->fim; }
+
+int filaCheia(Fila *f) {
+    return f->fim >= MAX_Fila;
+}
+
+void inserir(Fila *f, Peca p) {
+    if (filaCheia(f)) {
+        printf("\n[!] Alerta: Fila cheia!\n");
+        return;
+    }
+    f->dados[f->fim++] = p;
+}
+
+Peca remover(Fila *f) {
+    if (filaVazia(f)) {
+        Peca vazia = {'?', 0};
+        return vazia;
+    }
+    return f->dados[f->inicio++];
+}
+
+// --- LÓGICA DO JOGO ---
+Peca gerarPeca(int *contadorID) {
+    char tipos[] = {'I', 'O', 'T', 'L'};
+    Peca nova;
+    nova.nome = tipos[rand() % 4];
+    nova.id = (*contadorID)++;
+    return nova;
+}
+
+void exibirFila(Fila f, const char* titulo) {
+    printf("\n--- %s ---\n", titulo);
+    if (f.inicio == f.fim) {
+        printf("[Fila Vazia]\n");
+    } else {
+        for (int i = f.inicio; i < f.fim; i++) {
+            printf("Peca: [%c] | Id: %d\n", f.dados[i].nome, f.dados[i].id);
+        }
+    }
+}
+
+int main() {
+    srand(time(NULL));
+    int idGlobal = 1;
+
+    Fila filaOriginal, filaInvertida;
+    Pilha auxiliar;
+
+    inicializarFila(&filaOriginal);
+    inicializarFila(&filaInvertida);
+    inicializarPilha(&auxiliar);
+
+    // 1. Populando a Fila Original
+    for (int i = 0; i < 5; i++) {
+        inserir(&filaOriginal, gerarPeca(&idGlobal));
+    }
+    exibirFila(filaOriginal, "FILA ORIGINAL (ORDEM DE CHEGADA)");
+
+    // 2. LÓGICA MESTRE: Inversão (Fila -> Pilha -> Nova Fila)
+
+
+    // Passo A: Tira da Fila e Põe na Pilha
+    while (!filaVazia(&filaOriginal)) {
+        Peca p = remover(&filaOriginal);
+        push(&auxiliar, p);
+    }
+
+    // Passo B: Tira da Pilha (sai invertido) e Põe na Fila Invertida
+    while (!pilhaVazia(&auxiliar)) {
+        Peca p;
+        pop(&auxiliar, &p);
+        inserir(&filaInvertida, p);
+    }
+
+    exibirFila(filaInvertida, "FILA INVERTIDA (LOGICA MESTRE)");
+
+    printf("\nMissao cumprida, Geise! O sistema de inversao esta pronto.\n");
+
+    return 0;
